@@ -1,0 +1,57 @@
+project:
+  name: DP2LNet
+  run_root: runs/mtl
+  run_name: bridge
+
+data:
+  train_image_dir: data/train/images
+  train_mask_dir: data/train/masks
+  train_label_dir: data/train/labels
+  val_image_dir: data/val/images
+  val_mask_dir: data/val/masks
+  val_label_dir: data/val/labels
+  test_image_dir: data/test/images
+  test_mask_dir: data/test/masks
+  test_label_dir: data/test/labels
+  img_size: 512
+  mask_encoding: index
+  normalize_mode: zero_one
+  aug_level: medium
+  num_workers: 4
+
+task:
+  type: multitask
+  seg_class_names: [BG, CR, CO, SP]
+  det_class_names: [EC, DB, EB]
+
+loss:
+  seg_loss: ce_dice
+  det_loss: fcos
+  seg_weight: 0.6
+  det_weight: 0.4
+
+train:
+  epochs: 120
+  batch_size: 1
+  grad_accum_steps: 4
+  optimizer: adamw
+  lr: 0.0001
+  weight_decay: 0.0001
+  scheduler: cosine
+  warmup_epochs: 5
+  min_lr: 0.000001
+  amp: true
+  seed: 42
+  log_interval: 20
+
+eval:
+  conf_thres: 0.25
+  nms_iou: 0.5
+  pr_iou_thres: 0.5
+  map_iou_start: 0.5
+  map_iou_end: 0.95
+  map_iou_step: 0.05
+
+metric:
+  score_weight_seg: 0.5
+  score_weight_det: 0.6
